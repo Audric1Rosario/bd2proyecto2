@@ -138,15 +138,25 @@ public class Dashboard extends JFrame {
 		});*/
 		mnArcades.add(mntmAgregarArcade);
 
-		JMenuItem mntmListaDeArcades = new JMenuItem("Lista de Arcadees");
+		JMenuItem mntmListaDeArcades = new JMenuItem("Lista de Arcades");
 		/*mntmListaDeArcades.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ListaArcadees ventana = new ListaArcadees(actual);
+				ListaArcades ventana = new ListaArcades(actual);
 				ventana.setModal(true);
 				ventana.setVisible(true);
 			}
 		});*/
 		mnArcades.add(mntmListaDeArcades);
+		
+		JMenuItem mntmJugarArcade = new JMenuItem("Jugar Arcade");
+		/*mntmListaDeArcades.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				ListaArcades ventana = new ListaArcades(actual);
+				ventana.setModal(true);
+				ventana.setVisible(true);
+			}
+		});*/
+		mnArcades.add(mntmJugarArcade);
 
 		// Menú del Puntuaciones clínico.
 		JMenu mnPuntuaciones = new JMenu("Puntuaciones");
@@ -211,6 +221,16 @@ public class Dashboard extends JFrame {
 			}
 		});*/
 		mnPremio.add(mntmListaPremios);
+		
+		JMenuItem mntmCanjearPremio = new JMenuItem("Canjear Premio");
+		/*mntmListaPremios.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				RegConsulta ventana = new RegConsulta(actual, null);
+				ventana.setModal(true);
+				ventana.setVisible(true);
+			}
+		});*/
+		mnPremio.add(mntmCanjearPremio);
 		
 		JMenu mnPerfil = new JMenu("Perfil");
 		menuBar.add(mnPerfil);
