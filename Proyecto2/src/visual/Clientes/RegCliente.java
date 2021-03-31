@@ -40,7 +40,7 @@ import java.util.Calendar;
 import javax.swing.*;
 import java.awt.Color;
 
-public class RegCliente extends JFrame {
+public class RegCliente extends JDialog {
 
 	private JPanel contentPane;
 	/**
@@ -99,10 +99,11 @@ public class RegCliente extends JFrame {
 	 * @throws ParseException 
 	 */
 	public RegCliente(/*Cliente Cliente*/) throws ParseException{
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		// this.ClienteModificar = Cliente;
 		setTitle("Registrar Cliente.");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(RegCliente.class.getResource("/image/game-controller.png")));
-		setBounds(100, 100, 561, 341);
+		setBounds(100, 100, 560, 340);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));

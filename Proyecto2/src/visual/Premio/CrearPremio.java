@@ -37,7 +37,7 @@ public class CrearPremio extends JDialog {
 	//private Premio modificar;
 	/**
 	 * Launch the application.
-	 */
+	 *//*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -49,7 +49,7 @@ public class CrearPremio extends JDialog {
 				}
 			}
 		});
-	}
+	}*/
 
 	/**
 	 * Create the frame.
@@ -57,7 +57,7 @@ public class CrearPremio extends JDialog {
 	public CrearPremio(/*Premio modificar*/) {
 		setResizable(false);
 		//this.modificar = modificar;
-
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		//if (modificar == null)
 			setTitle("Crear categor\u00EDa");
 		//else 

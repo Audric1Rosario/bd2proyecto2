@@ -39,7 +39,7 @@ public class CrearCategoria extends JDialog {
 	//private Categoria modificar;
 	/**
 	 * Launch the application.
-	 */
+	 *//*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -51,15 +51,15 @@ public class CrearCategoria extends JDialog {
 				}
 			}
 		});
-	}
+	}*/
 
 	/**
-	 * Create the frame.
+	 * Create the dialog.
 	 */
 	public CrearCategoria(/*Categoria modificar*/) {
 		setResizable(false);
 		//this.modificar = modificar;
-
+		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		//if (modificar == null)
 			setTitle("Crear categor\u00EDa");
 		//else 

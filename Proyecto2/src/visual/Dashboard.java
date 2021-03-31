@@ -43,6 +43,15 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 import javax.swing.border.EtchedBorder;
 
+import visual.Administracion.*;
+import visual.Arcade.*;
+import visual.Categorias.*;
+import visual.Clientes.*;
+import visual.Perfil.*;
+import visual.Premio.*;
+import visual.Puntuaciones.*;
+
+
 public class Dashboard extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -108,11 +117,11 @@ public class Dashboard extends JFrame {
 		menuBar.add(mnRegistro);
 
 		JMenuItem mntmRegCliente = new JMenuItem("Registrar Cliente");
-		/*mntmRegCliente.addActionListener(new ActionListener() {
+		mntmRegCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				RegCliente ventana = null;
 				try {
-					ventana = new RegCliente(null);
+					ventana = new RegCliente();
 				} catch (ParseException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -121,7 +130,7 @@ public class Dashboard extends JFrame {
 				ventana.setVisible(true);
 				
 			}
-		});*/
+		});
 		mnRegistro.add(mntmRegCliente);
 
 		// Menú de Arcades.
@@ -129,71 +138,71 @@ public class Dashboard extends JFrame {
 		menuBar.add(mnArcades);
 
 		JMenuItem mntmAgregarArcade = new JMenuItem("Agregar Arcade");
-		/*mntmAgregarArcade.addActionListener(new ActionListener() {
+		mntmAgregarArcade.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CrearArcade ventana = new CrearArcade(null);
+				CrearArcade ventana = new CrearArcade();
 				ventana.setModal(true);
 				ventana.setVisible(true);
 			}
-		});*/
+		});
 		mnArcades.add(mntmAgregarArcade);
 
 		JMenuItem mntmListaDeArcades = new JMenuItem("Lista de Arcades");
-		/*mntmListaDeArcades.addActionListener(new ActionListener() {
+		mntmListaDeArcades.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ListaArcades ventana = new ListaArcades(actual);
+				ListaArcades ventana = new ListaArcades();
 				ventana.setModal(true);
 				ventana.setVisible(true);
 			}
-		});*/
+		});
 		mnArcades.add(mntmListaDeArcades);
 		
 		JMenuItem mntmJugarArcade = new JMenuItem("Jugar Arcade");
-		/*mntmListaDeArcades.addActionListener(new ActionListener() {
+		mntmJugarArcade.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ListaArcades ventana = new ListaArcades(actual);
+				JugarArcade ventana = new JugarArcade();
 				ventana.setModal(true);
 				ventana.setVisible(true);
 			}
-		});*/
+		});
 		mnArcades.add(mntmJugarArcade);
 
-		// Menú del Puntuaciones clínico.
+		// Menú del Puntuaciones.
 		JMenu mnPuntuaciones = new JMenu("Puntuaciones");
 		menuBar.add(mnPuntuaciones);
 		
 		JMenuItem mntmPuntuaciones = new JMenuItem("Lista de Puntuaciones");
-		/*mntmPuntuaciones.addActionListener(new ActionListener() {
+		mntmPuntuaciones.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				BuscarCliente ventana = new BuscarCliente(actual, true);
+				ListaPuntuaciones ventana = new ListaPuntuaciones();
 				ventana.setModal(true);
 				ventana.setVisible(true);	
 			}
-		});*/
+		});
 		mnPuntuaciones.add(mntmPuntuaciones);
 
-		// Menú de las vacunas.
+		// Menú de las Categorías.
 		JMenu mnCategoria = new JMenu("Categor\u00EDas");
 		menuBar.add(mnCategoria);
 
 		JMenuItem mntmCategoria = new JMenuItem("Crear categor\u00EDa");
-		/*mntmCategoria.addActionListener(new ActionListener() {
+		mntmCategoria.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CrearVacuna ventana = new CrearVacuna(null);
+				CrearCategoria ventana = new CrearCategoria();
 				ventana.setModal(true);
 				ventana.setVisible(true);
 			}
-		});*/
+		});
 		mnCategoria.add(mntmCategoria);
 
 		JMenuItem mntmListaDeCategorias = new JMenuItem("Lista de categorias");
-		/*mntmListaDeCategorias.addActionListener(new ActionListener() {
+		mntmListaDeCategorias.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				ListaVacunas ventana = new ListaVacunas(actual);
+				ListaCategorias ventana = new ListaCategorias();
 				ventana.setModal(true);
 				ventana.setVisible(true);
 			}
-		});*/
+		});
 		mnCategoria.add(mntmListaDeCategorias);
 
 		// Menú del Premio
@@ -201,52 +210,49 @@ public class Dashboard extends JFrame {
 		menuBar.add(mnPremio);
 
 		JMenuItem mntmCrearPremio = new JMenuItem("Crear Premio");
-		/*mntmCrearPremio.addActionListener(new ActionListener() {
+		mntmCrearPremio.addActionListener(new ActionListener() {
 			// Borrar cuando hagan push
 			public void actionPerformed(ActionEvent e) {
-				BuscarCita ventana = new BuscarCita(actual);
+				CrearPremio ventana = new CrearPremio();
 				ventana.setModal(true);
 				ventana.setVisible(true);
 				
 			}
-		});*/
+		});
 		mnPremio.add(mntmCrearPremio);
 
 		JMenuItem mntmListaPremios = new JMenuItem("Lista de Premios");
-		/*mntmListaPremios.addActionListener(new ActionListener() {
+		mntmListaPremios.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RegConsulta ventana = new RegConsulta(actual, null);
+				ListaPremios ventana = new ListaPremios();
 				ventana.setModal(true);
 				ventana.setVisible(true);
 			}
-		});*/
+		});
 		mnPremio.add(mntmListaPremios);
 		
 		JMenuItem mntmCanjearPremio = new JMenuItem("Canjear Premio");
-		/*mntmListaPremios.addActionListener(new ActionListener() {
+		mntmCanjearPremio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RegConsulta ventana = new RegConsulta(actual, null);
+				CanjearPremio ventana = new CanjearPremio();
 				ventana.setModal(true);
 				ventana.setVisible(true);
 			}
-		});*/
+		});
 		mnPremio.add(mntmCanjearPremio);
 		
+		// Menú Perfil
 		JMenu mnPerfil = new JMenu("Perfil");
 		menuBar.add(mnPerfil);
 		
 		JMenuItem mntmVerPerfil = new JMenuItem("Ver Perfil");
-		/*mntmVerPerfil.addActionListener(new ActionListener() {
+		mntmVerPerfil.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (actual instanceof Administrador) {
-					if (((Administrador)actual).getAutoridad() == 1) {
-						Opciones ventana = new Opciones();
-						ventana.setModal(true);
-						ventana.setVisible(true);
-					}
-				}
+				VerPerfil ventana = new VerPerfil();
+				ventana.setModal(true);
+				ventana.setVisible(true);
 			}
-		});*/
+		});
 		mnPerfil.add(mntmVerPerfil);
 		
 		JMenuItem mntmSalir = new JMenuItem("Salir");
@@ -278,13 +284,13 @@ public class Dashboard extends JFrame {
 		menuBar.add(mnAdministracin);
 
 		JMenuItem mntmUsuarios = new JMenuItem("Usuarios");
-		/*mntmUsuarios.addActionListener(new ActionListener() {
+		mntmUsuarios.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Usuarios ventana = new Usuarios(false);
+				Usuarios ventana = new Usuarios();
 				ventana.setModal(true);
 				ventana.setVisible(true);
 			}
-		});*/
+		});
 		mnAdministracin.add(mntmUsuarios);
 
 		// Ocultar opciones según los permisos del usuario
