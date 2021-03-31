@@ -2,6 +2,8 @@ package visual.Arcade;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -86,6 +88,11 @@ public class CrearArcade extends JDialog {
 			}
 			{
 				JButton btnCerrar = new JButton("Cerrar");
+				btnCerrar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						dispose();
+					}
+				});
 				btnCerrar.setActionCommand("Cancel");
 				buttonPane.add(btnCerrar);
 			}
