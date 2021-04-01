@@ -1,7 +1,6 @@
 package visual.Categorias;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import java.awt.FlowLayout;
@@ -10,17 +9,23 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import java.awt.Toolkit;
 import javax.swing.border.TitledBorder;
-import javax.swing.text.DefaultCaret;
+
+import logic.JDBCPostgreSQLConnect;
+import logic.Juego;
 
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 import java.awt.Color;
+import java.awt.EventQueue;
+
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
 import javax.swing.border.EtchedBorder;
@@ -36,10 +41,16 @@ public class CrearCategoria extends JDialog {
 	private JTextField txtClasificacion;
 	
 	// variables logicas.
-	//private Categoria modificar;
+	private Categoria modificar;
+	
+	static Connection conexion = null;
+	static PreparedStatement preparedStatement = null;
+	static ResultSet resultSet = null;
 	/**
 	 * Launch the application.
-	 *//*
+	 */
+	
+	/*
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -51,12 +62,13 @@ public class CrearCategoria extends JDialog {
 				}
 			}
 		});
-	}*/
+	}
+	*/
 
 	/**
 	 * Create the dialog.
 	 */
-	public CrearCategoria(/*Categoria modificar*/) {
+	public CrearCategoria() {
 		setResizable(false);
 		//this.modificar = modificar;
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -139,18 +151,18 @@ public class CrearCategoria extends JDialog {
 
 						// Verificación de que no se repite el nombre de la categoria.
 						// Revisar que no se repita
-						/*if (modificar == null) {
-							if (Clinica.getInstance().verificarCategoria(txtNombreCategoria.getText()) == false) {
+						if (modificar == null) {
+							if (Juego.getInstance().verificarCategoria(txtNombreCategoria.getText()) == false) {
 								JOptionPane.showMessageDialog(null, "El nombre de la categoria ya existe, favor coloque uno nuevo.", "Advertencia.", JOptionPane.WARNING_MESSAGE);
 								return;
 							} 
-						}*/
-						/*
+						}
+						
 						if (modificar != null) {							
 							modificar.setClasificacion(txtClasificacion.getText());
 							modificar.setDescripcion(txtDescripcion.getText());
-							ListaCategoriaes.rellenarTabla(txtNombreCategoria.getText());
-							ListaCategoriaes.sclear();
+							ListaCategorias.rellenarTabla();
+							ListaCategorias.sclear();
 							JOptionPane.showMessageDialog(null, "Categoria modificada exitosamente.", 
 									"Modificar categoria", JOptionPane.INFORMATION_MESSAGE);
 							dispose();
@@ -160,12 +172,12 @@ public class CrearCategoria extends JDialog {
 							Categoria activar = null;
 							boolean volverActivar = false; 
 							int aux = 0;
-							while (!volverActivar && aux < Clinica.getInstance().getCategoriaes().size()) {
-								if (!Clinica.getInstance().getCategoriaes().get(aux).isListar()) { // Categoriaes desactivadas.
-									if (Clinica.getInstance().getCategoriaes().get(aux).getNombre().equalsIgnoreCase(txtNombreCategoria.getText())) {
+							while (!volverActivar && aux < Juego.getInstance().getCategorias().size()) {
+								if (!Juego.getInstance().getCategorias().get(aux).isListar()) { // Categorias desactivadas.
+									if (Juego.getInstance().getCategorias().get(aux).getNombre().equalsIgnoreCase(txtNombreCategoria.getText())) {
 										// Significa que no es una creación, sólo se vuelve a activar y a cambiar los datos de una categoria que ya existe.
 										volverActivar = true;
-										activar = Clinica.getInstance().getCategoriaes().get(aux);
+										activar = Juego.getInstance().getCategorias().get(aux);
 									}
 								}
 								aux++;
@@ -173,16 +185,35 @@ public class CrearCategoria extends JDialog {
 
 							if (!volverActivar) {	// Si no estaba desactivada, crear categoria
 								Categoria nueva = new Categoria(txtNombreCategoria.getText(), txtClasificacion.getText(), txtDescripcion.getText());
-								JOptionPane.showMessageDialog(null, "Categoria creada exitosamente.", 
-										"Crear categoria", JOptionPane.INFORMATION_MESSAGE);
-								Clinica.getInstance().addCategoria(nueva); 
+								
+								conexion = JDBCPostgreSQLConnect.conectar();
+								try {
+									preparedStatement = conexion
+											.prepareStatement("INSERT INTO categoria (nombre, descripcion, clasificacion) values (?,?,?)");
+									preparedStatement.setString(1, txtNombreCategoria.getText());
+									preparedStatement.setString(2, txtDescripcion.getText());
+									preparedStatement.setString(3, txtClasificacion.getText());
+									
+									int resultado = preparedStatement.executeUpdate();
+									if(resultado > 0) {
+										JOptionPane.showMessageDialog(null, "Categoria creada exitosamente.", 
+												"Crear categoria", JOptionPane.INFORMATION_MESSAGE);
+										clear();
+										conexion.close();
+									} else {
+										JOptionPane.showMessageDialog(null, "No se pudo agregar el registro");
+									}
+								} catch (Exception e2) {
+									e2.printStackTrace();
+								}
+								
+								Juego.getInstance().addCategoria(nueva); 
 							} else { // De lo contrario
 								activar.setClasificacion(txtClasificacion.getText());
 								activar.setDescripcion(txtDescripcion.getText());
 								activar.setListar(true);   // Esta categoria vuelve a estar activa.
 							}
-							clear();
-						}			*/							
+						}									
 					}
 				});
 				btnAceptar.setActionCommand("OK");
@@ -200,5 +231,12 @@ public class CrearCategoria extends JDialog {
 				buttonPane.add(btnCancelar);
 			}
 		}
+	}
+	
+	private void clear()  {
+		txtNombreCategoria.setText("");
+		txtDescripcion.setText("");
+		txtClasificacion.setText("");
+		return;
 	}
 }

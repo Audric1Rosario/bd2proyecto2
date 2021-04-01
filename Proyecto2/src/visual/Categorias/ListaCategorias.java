@@ -13,16 +13,25 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import logic.JDBCPostgreSQLConnect;
+import logic.Juego;
+
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.JTextArea;
 import javax.swing.JComboBox;
 import javax.swing.ImageIcon;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -42,7 +51,7 @@ public class ListaCategorias extends JDialog {
 	private static JTextField txtNombre;
 
 	// Text-Area
-	private static JTextArea txtSintomas;
+	private static JTextArea txtDescripcion;
 	private static JTextField txtBuscar;
 
 	// Botones.
@@ -50,25 +59,35 @@ public class ListaCategorias extends JDialog {
 	private static JButton btnModificar;
 	private static JButton btnEliminar;
 	private JButton btnCerrar;
-	private JTextField txtClasificacion;
+	private static JTextField txtClasificacion;
+	
+	static Connection conexion = null;
+	static PreparedStatement preparedStatement = null;
+	static ResultSet resultSet = null;
 
 	// Variables lógicas.
 	// private Empleado usuarioActual;
-	// private static Enfermedad enfermedadModificar;
+	 private static Categoria categoriaModificar;
 
 	/**
 	 * Launch the application.
-	 *//*
-		 * public static void main(String[] args) { try { ListaCategorias dialog = new
-		 * ListaCategorias(); dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		 * dialog.setVisible(true); } catch (Exception e) { e.printStackTrace(); } }
-		 */
-
+	 */
+	 
+		 public static void main(String[] args) { 
+			 try { 
+				 ListaCategorias dialog = new ListaCategorias(); 
+				 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				 dialog.setVisible(true); 
+			} catch (Exception e) { 
+				e.printStackTrace(); 
+			} 
+		}
 	/**
 	 * Create the dialog.
 	 */
-	public ListaCategorias(/* Empleado usuarioActual */) {
+	public ListaCategorias() {
 		// this.usuarioActual = usuarioActual;
+		ListaCategorias.categoriaModificar = null;
 		setResizable(false);
 		setTitle("Control de Categorías");
 		setIconImage(
@@ -89,29 +108,65 @@ public class ListaCategorias extends JDialog {
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 		panel.add(scrollPane, BorderLayout.CENTER);
-
+		{
 		model = new DefaultTableModel();
 		String[] headers = { "Nombre", "Descripción", "Clasificación" };
 		model.setColumnIdentifiers(headers);
+		
 		tableEnfermedades = new JTable() {
 			public boolean isCellEditable(int rowIndex, int vColIndex) {
 				return false;
 			}
 		};
+		tableEnfermedades = new JTable() {
+			public boolean isCellEditable(int rowIndex, int vColIndex) {
+				return false;
+			}};
+			tableEnfermedades.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableEnfermedades.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+				public void valueChanged(ListSelectionEvent event) {
+					if (tableEnfermedades.getSelectedRow() != -1) {
+						categoriaModificar = Juego.getInstance().buscarCategoriaByNombre(tableEnfermedades.getValueAt(tableEnfermedades.getSelectedRow(), 0).toString());
+						rellenarDatos();
+						
+						/*
+						if (usuarioActual instanceof Administrador) {
+							if (((Administrador)usuarioActual).getAutoridad() <= 3) {
+								btnModificar.setEnabled(true);
+								btnEliminar.setEnabled(true);
+							}
+						}
+						*/
+					}
+				}
+			});
+			tableEnfermedades.setModel(model);
+			tableEnfermedades.getTableHeader().setResizingAllowed(false); 
+			tableEnfermedades.getTableHeader().setReorderingAllowed(false);
+			scrollPane.setViewportView(tableEnfermedades);
+		
 		tableEnfermedades.setModel(model);
 		tableEnfermedades.getTableHeader().setResizingAllowed(false);
 		tableEnfermedades.getTableHeader().setReorderingAllowed(false);
-		/*
-		 * tableEnfermedades.getSelectionModel().addListSelectionListener(new
-		 * ListSelectionListener(){ public void valueChanged(ListSelectionEvent event) {
-		 * if (tableEnfermedades.getSelectedRow() != -1) { enfermedadModificar =
-		 * Clinica.getInstance().buscarEnfermedadByNombre(tableEnfermedades.getValueAt(
-		 * tableEnfermedades.getSelectedRow(), 0).toString()); rellenarDatos();
-		 * 
-		 * if (usuarioActual instanceof Administrador) { if
-		 * (((Administrador)usuarioActual).getAutoridad() <= 3) {
-		 * btnModificar.setEnabled(true); btnEliminar.setEnabled(true); } } } } });
-		 */
+		}
+		
+		tableEnfermedades.getSelectionModel().addListSelectionListener(new
+		ListSelectionListener(){ public void valueChanged(ListSelectionEvent event) {
+			if (tableEnfermedades.getSelectedRow() != -1) { 
+				categoriaModificar = Juego.getInstance().buscarCategoriaByNombre(
+						tableEnfermedades.getValueAt(tableEnfermedades.getSelectedRow(), 0).toString()); 
+					rellenarDatos();
+					/*
+					if (usuarioActual instanceof Administrador) { 
+						if(((Administrador)usuarioActual).getAutoridad() <= 3) {
+							btnModificar.setEnabled(true); 
+							btnEliminar.setEnabled(true); 
+						} 
+					} 
+					*/
+			} 
+		}});
+		
 		scrollPane.setViewportView(tableEnfermedades);
 		{
 			JPanel panel_1 = new JPanel();
@@ -154,11 +209,11 @@ public class ListaCategorias extends JDialog {
 			scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 			panel_2.add(scrollPane_1, BorderLayout.CENTER);
 
-			txtSintomas = new JTextArea();
-			txtSintomas.setEditable(false);
-			txtSintomas.setWrapStyleWord(true);
-			txtSintomas.setLineWrap(true);
-			scrollPane_1.setViewportView(txtSintomas);
+			txtDescripcion = new JTextArea();
+			txtDescripcion.setEditable(false);
+			txtDescripcion.setWrapStyleWord(true);
+			txtDescripcion.setLineWrap(true);
+			scrollPane_1.setViewportView(txtDescripcion);
 		}
 		{
 			JPanel panel_1 = new JPanel();
@@ -174,11 +229,14 @@ public class ListaCategorias extends JDialog {
 
 			btnBuscar = new JButton("");
 			btnBuscar.setToolTipText("Buscar");
-			/*
-			 * btnBuscar.addActionListener(new ActionListener() { public void
-			 * actionPerformed(ActionEvent e) { clear(); tableEnfermedades.clearSelection();
-			 * rellenarTabla(txtBuscar.getText()); } });
-			 */
+			
+			btnBuscar.addActionListener(new ActionListener() { 
+				public void actionPerformed(ActionEvent e) { 
+					clear(); 
+					tableEnfermedades.clearSelection();
+					rellenarTabla();
+				} 
+			});
 			btnBuscar.setIcon(new ImageIcon(ListaCategorias.class.getResource("/image/magnifying-glass.png")));
 			btnBuscar.setBounds(318, 23, 40, 23);
 			panel_1.add(btnBuscar);
@@ -190,11 +248,13 @@ public class ListaCategorias extends JDialog {
 
 			JButton btnRefresh = new JButton("");
 			btnRefresh.setToolTipText("Recargar");
-			/*
-			 * btnRefresh.addActionListener(new ActionListener() { public void
-			 * actionPerformed(ActionEvent e) { clear(); txtBuscar.setText("");
-			 * rellenarTabla(""); } });
-			 */
+			btnRefresh.addActionListener(new ActionListener() { 
+			public void actionPerformed(ActionEvent e) { 
+			clear(); 
+			txtBuscar.setText("");
+			rellenarTabla(); 
+			} });
+			
 			btnRefresh.setIcon(new ImageIcon(ListaCategorias.class.getResource("/image/reload.png")));
 			btnRefresh.setBounds(368, 23, 40, 23);
 			panel_1.add(btnRefresh);
@@ -206,13 +266,16 @@ public class ListaCategorias extends JDialog {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				btnModificar = new JButton("Modificar");
-				/*
-				 * btnModificar.addActionListener(new ActionListener() { public void
-				 * actionPerformed(ActionEvent e) { if (enfermedadModificar != null &&
-				 * usuarioActual instanceof Administrador) { CrearEnfermedad ventana = new
-				 * CrearEnfermedad(enfermedadModificar); ventana.setModal(true);
-				 * ventana.setVisible(true); } } });
-				 */
+		
+				btnModificar.addActionListener(new ActionListener() { 
+				public void actionPerformed(ActionEvent e) { 
+					if (categoriaModificar != null /* & usuarioActual instanceof Administrador*/) { 
+						CrearCategoria ventana = new CrearCategoria(); 
+						ventana.setModal(true);
+						ventana.setVisible(true); 
+					} 
+				} });
+				
 				btnModificar.setEnabled(false);
 				btnModificar.setActionCommand("OK");
 				buttonPane.add(btnModificar);
@@ -289,5 +352,65 @@ public class ListaCategorias extends JDialog {
 		}
 		rellenarTabla("");*/
 	}
-
+	
+	private void clear() {
+		txtNombre.setText("");
+		txtClasificacion.setText("");
+		txtDescripcion.setText("");
+		btnModificar.setEnabled(false);
+		btnEliminar.setEnabled(false);
+	}
+	
+	public static void sclear() {
+		txtNombre.setText(categoriaModificar.getNombre());
+		txtClasificacion.setText(categoriaModificar.getClasificacion());
+		txtDescripcion.setText(categoriaModificar.getDescripcion());
+	}
+	
+	private void rellenarDatos() {
+		conexion = JDBCPostgreSQLConnect.conectar();
+		try {
+			preparedStatement = conexion.prepareStatement("SELECT * FROM categoria");
+			resultSet = preparedStatement.executeQuery();
+			
+			if(resultSet.next()) {
+				txtNombre.setText(resultSet.getString("nombre"));
+				txtDescripcion.setText(resultSet.getString("descripcion"));
+				txtClasificacion.setText(resultSet.getString("clasificacion"));
+			} else {
+				JOptionPane.showMessageDialog(null, "Error al cargar datos.", "Advertencia.", JOptionPane.WARNING_MESSAGE);
+			}
+			conexion.close();
+			
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
+	}
+	
+	public static void rellenarTabla(){
+		model.setRowCount(0);
+		row = new Object[model.getColumnCount()];
+		
+		conexion = JDBCPostgreSQLConnect.conectar();
+		try {
+			for (int i = 0; i < Juego.getInstance().getCategorias().size(); i++) {
+				preparedStatement = conexion.prepareStatement("SELECT * FROM categoria WHERE nombre = ?");
+				preparedStatement.setString(1, txtNombre.getText());
+				resultSet = preparedStatement.executeQuery();
+				
+				if(resultSet.next()) {
+					if (Juego.getInstance().getCategorias().get(i).isListar()) {	// Saber si se puede listar o no.
+						row[0] = resultSet.getString("nombre");
+						row[1] = resultSet.getString("descripcion");
+						row[2] = resultSet.getString("clasificacion");
+					}
+				} else {
+					JOptionPane.showMessageDialog(null, "Error al cargar datos.", "Advertencia.", JOptionPane.WARNING_MESSAGE);
+				}
+				conexion.close();
+			}	
+		} catch (Exception e2) {
+			e2.printStackTrace();
+		}
+	}
 }
