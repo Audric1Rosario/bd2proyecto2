@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="jgoodies-common-1.8.0-sources.jar"/>
 	<classpathentry kind="lib" path="jgoodies-forms-1.8.0.jar"/>
 	<classpathentry kind="lib" path="jgoodies-forms-1.8.0-sources.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ndavi/git/bd2proyecto2/Proyecto2/src/libraries/postgresql-42.2.19.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
