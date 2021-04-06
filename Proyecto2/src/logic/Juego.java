@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
 import logic.modelos.*;
 
 public class Juego implements Serializable{
@@ -97,18 +99,13 @@ public class Juego implements Serializable{
 				if (!(fin > 0)) {
 					result = false;
 				} 
-				JDBCPostgreSQLConnect.desconectar();
+				
 			} catch (SQLException e) { 
 				e.printStackTrace();
 				result = false;
 			}
 		}
-		//if (result) {
-			//categorias.add(categoria);
-		//}
-		if (!result) {
-			JDBCPostgreSQLConnect.desconectar();
-		}
+		JDBCPostgreSQLConnect.desconectar();
 		return result;
 	}
 	
@@ -324,12 +321,12 @@ public class Juego implements Serializable{
 	}
 	
 	// Arcade
-	public Boolean addPersona(Persona persona) {
-		Boolean result = true;
+	public int addPersona(Persona persona) {
+		int result = 0;
 		PreparedStatement preparedStatement;
 		
 		if (persona.getId_direccion() == 0) {
-			return false;
+			return -1;
 		}
 		
 		if (JDBCPostgreSQLConnect.getConnection() != null) {
@@ -337,32 +334,34 @@ public class Juego implements Serializable{
 			try {
 				// Preparar inserciï¿½n
 				preparedStatement = JDBCPostgreSQLConnect.getConnection()
-						.prepareStatement("INSERT INTO persona (nombre, apellido, sexo, fecha_nacimiento, correo, telefono, id_direccion) values (?, ?, ?, ?, ?, ?, ?)");
+						.prepareStatement("INSERT INTO persona (nombre, apellido, sexo, correo, telefono, id_direccion) values (?, ?, ?, ?, ?, ?)");
 				preparedStatement.setString(1, persona.getNombre());
 				preparedStatement.setString(2, persona.getApellido());
 				preparedStatement.setString(3, Character.toString(persona.getSexo()));
-				preparedStatement.setDate(4, persona.getFecha_nacimiento());
-				preparedStatement.setString(5, persona.getCorreo());
-				preparedStatement.setString(6, persona.getTelefono());
-				preparedStatement.setInt(7, persona.getId_direccion());
+				preparedStatement.setString(4, persona.getCorreo());
+				preparedStatement.setString(5, persona.getTelefono());
+				preparedStatement.setInt(6, persona.getId_direccion());
 				
 				// Iniciar sentencia
 				int fin = preparedStatement.executeUpdate();
 				if (!(fin > 0)) {
-					result = false;
+					result = -1;
 				} 
+				
+				PreparedStatement newStatement = JDBCPostgreSQLConnect.getConnection()
+						.prepareStatement("SELECT MAX(id_persona) AS max FROM persona");
+				ResultSet datos = newStatement.executeQuery();
+				while (datos.next()) {
+					result = datos.getInt(1);
+				}
+				
 				JDBCPostgreSQLConnect.desconectar();
 			} catch (SQLException e) { 
 				e.printStackTrace();
-				result = false;
+				result = -1;
 			}
 		}
-		//if (result) {
-			//categorias.add(categoria);
-		//}
-		if (!result) {
-			JDBCPostgreSQLConnect.desconectar();
-		}
+		JDBCPostgreSQLConnect.desconectar();
 		return result;
 	}
 	
@@ -452,6 +451,10 @@ public class Juego implements Serializable{
 	
 	// Arcade
 	public Arcade buscarArcadePorId(int id) {
+		if (id < 0) {
+			return null;
+		}
+		
 		Arcade buscar = new Arcade();
 		Boolean process = true;
 				
@@ -491,6 +494,10 @@ public class Juego implements Serializable{
 	
 	// Categorï¿½a
 	public Categoria buscarCategoriaPorId(int id) {
+		if (id < 0) {
+			return null;
+		}
+		
 		Categoria buscar = new Categoria();
 		Boolean process = true;
 				
@@ -528,6 +535,10 @@ public class Juego implements Serializable{
 	
 	// Central
 	public Central buscarCentralPorId(int id) {
+		if (id < 0) {
+			return null;
+		}
+		
 		Central buscar = new Central();
 		Boolean process = true;
 				
@@ -566,6 +577,10 @@ public class Juego implements Serializable{
 	
 	// Direccion
 	public Direccion buscarDireccionPorId(int id) {
+		if (id < 0) {
+			return null;
+		}
+		
 		Direccion buscar = new Direccion();
 		Boolean process = true;
 				
@@ -603,6 +618,10 @@ public class Juego implements Serializable{
 	
 	// Persona
 	public Persona buscarPersonaPorId(int id) {
+		if (id < 0) {
+			return null;
+		}
+		
 		Persona buscar = new Persona();
 		Boolean process = true;
 				
@@ -644,6 +663,10 @@ public class Juego implements Serializable{
 	
 	// Premio
 	public Premio buscarPremioPorId(int id) {
+		if (id < 0) {
+			return null;
+		}
+		
 		Premio buscar = new Premio();
 		Boolean process = true;
 				
@@ -684,6 +707,10 @@ public class Juego implements Serializable{
 	
 	// Puntuaciones
 	public Puntuaciones buscarPuntuacionesPorId(int id) {
+		if (id < 0) {
+			return null;
+		}
+		
 		Puntuaciones buscar = new Puntuaciones();
 		Boolean process = true;
 				
@@ -724,6 +751,10 @@ public class Juego implements Serializable{
 	
 	// Ticket
 	public Ticket buscarTicketPorId(int id) {
+		if (id < 0) {
+			return null;
+		}
+		
 		Ticket buscar = new Ticket();
 		Boolean process = true;
 				
@@ -762,6 +793,10 @@ public class Juego implements Serializable{
 	
 	// Usuario
 	public Usuario buscarUsuarioPorId(int id) {
+		if (id < 0) {
+			return null;
+		}
+		
 		Usuario buscar = new Usuario();
 		Boolean process = true;
 				
@@ -809,7 +844,7 @@ public class Juego implements Serializable{
 	
 	
 	//Busqueda por nombre. (lista)
-	public ArrayList<Arcade> buscarArcade (String nombre) {
+	public ArrayList<Arcade> buscarArcade (String nombre, Boolean todo) {
 		ArrayList<Arcade> resultado = new ArrayList<Arcade>();
 		Boolean process = true;
 				
@@ -821,6 +856,9 @@ public class Juego implements Serializable{
 			PreparedStatement preparedStatement;
 			try {
 				String sqlQuery = "SELECT * FROM arcade WHERE nombre LIKE '%"+nombre+"%'";
+				if (todo) {
+					sqlQuery = "SELECT * FROM arcade";
+				}
 				preparedStatement = JDBCPostgreSQLConnect.getConnection()
 						.prepareStatement(sqlQuery);
 				ResultSet datos = preparedStatement.executeQuery();
@@ -851,7 +889,7 @@ public class Juego implements Serializable{
 		return resultado;
 	}
 	
-	public ArrayList<Categoria> buscarCategoria (String nombre) {
+	public ArrayList<Categoria> buscarCategoria (String nombre, Boolean todo) {
 		ArrayList<Categoria> resultado = new ArrayList<Categoria>();
 		Boolean process = true;
 				
@@ -863,6 +901,9 @@ public class Juego implements Serializable{
 			PreparedStatement preparedStatement;
 			try {
 				String sqlQuery = "SELECT * FROM categoria WHERE nombre LIKE '%"+nombre+"%'";
+				if (todo) {
+					sqlQuery = "SELECT * FROM categoria";
+				}
 				preparedStatement = JDBCPostgreSQLConnect.getConnection()
 						.prepareStatement(sqlQuery);
 				ResultSet datos = preparedStatement.executeQuery();
@@ -892,7 +933,7 @@ public class Juego implements Serializable{
 		return resultado;
 	}
 	
-	public ArrayList<Premio> buscarPremio (String nombre) {
+	public ArrayList<Premio> buscarPremio (String nombre, Boolean todo) {
 		ArrayList<Premio> resultado = new ArrayList<Premio>();
 		Boolean process = true;
 				
@@ -904,6 +945,9 @@ public class Juego implements Serializable{
 			PreparedStatement preparedStatement;
 			try {
 				String sqlQuery = "SELECT * FROM premio WHERE nombre_premio LIKE '%"+nombre+"%'";
+				if (todo) {
+					sqlQuery = "SELECT * FROM premio";
+				}
 				preparedStatement = JDBCPostgreSQLConnect.getConnection()
 						.prepareStatement(sqlQuery);
 				ResultSet datos = preparedStatement.executeQuery();
@@ -935,7 +979,7 @@ public class Juego implements Serializable{
 		return resultado;
 	}
 	
-	public ArrayList<Puntuaciones> buscarPuntuaciones (String nombre) {
+	public ArrayList<Puntuaciones> buscarPuntuaciones (String nombre, Boolean todo) {
 		ArrayList<Puntuaciones> resultado = new ArrayList<Puntuaciones>();
 		Boolean process = true;
 				
@@ -947,6 +991,9 @@ public class Juego implements Serializable{
 			PreparedStatement preparedStatement;
 			try {
 				String sqlQuery = "SELECT * FROM puntuaciones WHERE nombre LIKE '%"+nombre+"%'";
+				if (todo) {
+					sqlQuery = "SELECT * FROM puntuaciones";
+				}
 				preparedStatement = JDBCPostgreSQLConnect.getConnection()
 						.prepareStatement(sqlQuery);
 				ResultSet datos = preparedStatement.executeQuery();
@@ -1001,7 +1048,7 @@ public class Juego implements Serializable{
 									   "arcade",
 									   "id_central = " + ((Arcade)objetoMod).getId_central() +
 									   ", id_categoria = " + ((Arcade)objetoMod).getId_categoria() + 
-									   ", nombre = " + ((Arcade)objetoMod).getNombre() +
+									   ", nombre = '" + ((Arcade)objetoMod).getNombre() + "'" +
 									   ", ticket_imp = " + ((Arcade)objetoMod).getTicket_imp() +
 									   ", req_monedas = " + ((Arcade)objetoMod).getReq_monedas(),
 									   "id_arcade = " + ((Arcade)objetoMod).getId_arcade());
@@ -1014,9 +1061,9 @@ public class Juego implements Serializable{
 						updateQuery = String.format("UPDATE %s SET %s WHERE %s", 
 								   "central",
 								   "id_direccion = " + ((Central)objetoMod).getId_direccion() + 
-								   ", nombre = " + ((Central)objetoMod).getNombre() + 
+								   ", nombre = '" + ((Central)objetoMod).getNombre() + "'" +
 								   ", numero = " + ((Central)objetoMod).getNumero() +
-								   ", telefono = " + ((Central)objetoMod).getTelefono(),
+								   ", telefono = '" + ((Central)objetoMod).getTelefono() + "'",
 								   "id_central = " + ((Central)objetoMod).getId_central());
 					} else {
 						result = false;
@@ -1026,8 +1073,8 @@ public class Juego implements Serializable{
 					if (objetoMod instanceof Direccion) {
 						updateQuery = String.format("UPDATE %s SET %s WHERE %s", 
 								   "direccion",
-								   "pais = " + ((Direccion)objetoMod).getPais() +
-								   ", region = " + ((Direccion)objetoMod).getRegion() +
+								   "pais = '" + ((Direccion)objetoMod).getPais() + "'" +
+								   ", region = '" + ((Direccion)objetoMod).getRegion() + "'" +
 								   ", codigo_postal = " + ((Direccion)objetoMod).getCodigo_postal(),
 								   "id_direccion = " + ((Direccion)objetoMod).getId_direccion());
 					} else {
@@ -1038,9 +1085,9 @@ public class Juego implements Serializable{
 					if (objetoMod instanceof Categoria) {
 						updateQuery = String.format("UPDATE %s SET %s WHERE %s", 
 								   "categoria",
-								   "nombre = " + ((Categoria)objetoMod).getNombre() +
-								   ", descripcion = " + ((Categoria)objetoMod).getDescripcion() + 
-								   ", clasificacion = " + ((Categoria)objetoMod).getClasificacion(),
+								   "nombre = '" + ((Categoria)objetoMod).getNombre() + "'" +
+								   ", descripcion = '" + ((Categoria)objetoMod).getDescripcion()  + "'" +
+								   ", clasificacion = '" + ((Categoria)objetoMod).getClasificacion() + "'",
 								   "id_categoria = " + ((Categoria)objetoMod).getId_categoria());
 					} else {
 						result = false;
@@ -1050,11 +1097,11 @@ public class Juego implements Serializable{
 					if (objetoMod instanceof Persona) {
 						updateQuery = String.format("UPDATE %s SET %s WHERE %s", 
 								   "persona",
-								   "nombre = " + ((Persona)objetoMod).getNombre() +
-								   ", apellido = " + ((Persona)objetoMod).getApellido() + 
-								   ", sexo = " + Character.toString(((Persona)objetoMod).getSexo()) + 
-								   ", correo = " + ((Persona)objetoMod).getCorreo() + 
-								   ", telefono = " + ((Persona)objetoMod).getTelefono() +
+								   "nombre = '" + ((Persona)objetoMod).getNombre() + "'" +
+								   ", apellido = '" + ((Persona)objetoMod).getApellido() + "'" +
+								   ", sexo = '" + Character.toString(((Persona)objetoMod).getSexo()) + "'" +
+								   ", correo = '" + ((Persona)objetoMod).getCorreo() + "'" +
+								   ", telefono = '" + ((Persona)objetoMod).getTelefono() + "'" +
 								   ", id_direccion = " + ((Persona)objetoMod).getId_direccion(),
 								   "id_persona = " + ((Persona)objetoMod).getId_persona());
 					} else {
@@ -1066,7 +1113,7 @@ public class Juego implements Serializable{
 						updateQuery = String.format("UPDATE %s SET %s WHERE %s", 
 								   "premio",
 								   "id_central =" + ((Premio)objetoMod).getId_central() +
-								   ", nombre_premio = " + ((Premio)objetoMod).getNombre_premio() + 
+								   ", nombre_premio = '" + ((Premio)objetoMod).getNombre_premio() + "'" +
 								   ", puntuacion_req = " + ((Premio)objetoMod).getPuntuacion_req() + 
 								   ", ticket_req = " + ((Premio)objetoMod).getTicket_req() + 
 								   ", limite = " + ((Premio)objetoMod).getLimite(),
@@ -1081,7 +1128,7 @@ public class Juego implements Serializable{
 								   "puntuaciones",
 								   "id_central = " + ((Puntuaciones)objetoMod).getId_central() + 
 								   ", id_jugador = " + ((Puntuaciones)objetoMod).getId_jugador() + 
-								   ", nombre = " + ((Puntuaciones)objetoMod).getNombre() + 
+								   ", nombre = '" + ((Puntuaciones)objetoMod).getNombre() + "'" + 
 								   ", monedas_usadas = " + ((Puntuaciones)objetoMod).getMonedas_usadas(),
 								   "id_puntuacion = " + ((Puntuaciones)objetoMod).getId_puntuacion());
 					} else {
@@ -1094,7 +1141,7 @@ public class Juego implements Serializable{
 								   "ticket",
 								   "id_arcade = " + ((Ticket)objetoMod).getId_arcade() + 
 								   ", id_jugador =" + ((Ticket)objetoMod).getId_jugador() + 
-								   ", nombre = " + ((Ticket)objetoMod).getNombre(),
+								   ", nombre = '" + ((Ticket)objetoMod).getNombre() + "'",
 								   "id_ticket = " + ((Ticket)objetoMod).getId_ticket());
 					} else {
 						result = false;
@@ -1104,15 +1151,15 @@ public class Juego implements Serializable{
 					if (objetoMod instanceof Usuario) {
 						updateQuery = String.format("UPDATE %s SET %s WHERE %s", 
 								   "usuario",
-								   "nombre = " + ((Usuario)objetoMod).getNombre() +
-								   ", apellido = " + ((Usuario)objetoMod).getApellido() + 
-								   ", sexo = " + Character.toString(((Usuario)objetoMod).getSexo()) + 
-								   ", correo = " + ((Usuario)objetoMod).getCorreo() + 
-								   ", telefono = " + ((Usuario)objetoMod).getTelefono() +
+								   "nombre = '" + ((Usuario)objetoMod).getNombre() + "'" +
+								   ", apellido = '" + ((Usuario)objetoMod).getApellido() + "'" +
+								   ", sexo = '" + Character.toString(((Usuario)objetoMod).getSexo()) + "'" +
+								   ", correo = '" + ((Usuario)objetoMod).getCorreo() + "'" +
+								   ", telefono = '" + ((Usuario)objetoMod).getTelefono() + "'" +
 								   ", id_direccion = " + ((Usuario)objetoMod).getId_direccion() + 
 								   ", id_central = " + ((Usuario)objetoMod).getId_central() +
-								   ", nombre_usuario = " + ((Usuario)objetoMod).getNombre_usuario() + 
-								   ", clave = " + ((Usuario)objetoMod).getClave() + 
+								   ", nombre_usuario = '" + ((Usuario)objetoMod).getNombre_usuario() + "'" +
+								   ", clave = '" + ((Usuario)objetoMod).getClave() + "'" + 
 								   ", monedas = " + ((Usuario)objetoMod).getMonedas(),
 								   "id_usuario = " + ((Usuario)objetoMod).getId_jugador());
 					} else {
@@ -1126,6 +1173,7 @@ public class Juego implements Serializable{
 				
 				preparedStatement = JDBCPostgreSQLConnect.getConnection()
 						.prepareStatement(updateQuery);
+				JOptionPane.showMessageDialog(null, updateQuery, "Información.", JOptionPane.INFORMATION_MESSAGE);
 				// Ejecutar update
 				if (result) {
 					fin = preparedStatement.executeUpdate();
@@ -1152,11 +1200,6 @@ public class Juego implements Serializable{
 		if (JDBCPostgreSQLConnect.sqlEstado()) {
 			PreparedStatement preparedStatement;
 			try {
-				String sqlQuery = "DELETE FROM ? WHERE ? = ?";
-				preparedStatement = JDBCPostgreSQLConnect.getConnection()
-						.prepareStatement(sqlQuery);
-				//ResultSet datos = preparedStatement.executeQuery();
-				
 				String table = "", idTable = "";
 				switch (tipo.toLowerCase()) {
 				case "arcade":
@@ -1200,12 +1243,10 @@ public class Juego implements Serializable{
 					break;
 				}
 				
-				// Ejecutar delete
+				String sqlQuery = "DELETE FROM "+ table +" WHERE "+idTable+" =" + id;
+				preparedStatement = JDBCPostgreSQLConnect.getConnection()
+						.prepareStatement(sqlQuery);
 				if (result) {
-					preparedStatement.setString(1, table);
-					preparedStatement.setString(2, idTable);
-					preparedStatement.setInt(3, id);
-					
 					fin = preparedStatement.executeUpdate();
 				}
 			} catch (SQLException e) {

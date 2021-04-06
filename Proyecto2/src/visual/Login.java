@@ -8,6 +8,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import logic.Juego;
+import logic.modelos.Central;
+import logic.modelos.Direccion;
+
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -28,8 +32,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Date;
+import java.sql.Date;
 import java.awt.event.ActionEvent;
+import logic.modelos.*;
 
 public class Login extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -42,6 +47,35 @@ public class Login extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		
+		// Crear primer usuario
+		/*
+		 *  Usuario(String nombre, String apellido, char sexo, String correo, String telefono,
+			int id_direccion, int id_central, String nombre_usuario, String clave, int monedas)
+		 * *//*
+		Direccion direcPersona;
+		int idDirecPersona;
+		int personaId;
+		Usuario nuevo;
+		Persona primera;
+
+		if (Juego.getInstance().totalUsuario() == 0) {
+			direcPersona = new Direccion("DOM", "", 51000);
+			idDirecPersona = -1;
+			idDirecPersona = Juego.getInstance().addDireccion(direcPersona);	
+			
+			primera = new Persona("Admin", "admin", 'M', "hola@mundo.com", "809-999-0000", idDirecPersona);
+			personaId = -1;
+			personaId = Juego.getInstance().addPersona(primera);	
+			
+			nuevo = new Usuario(primera.getNombre(), primera.getApellido(), primera.getSexo(), primera.getCorreo(),
+					primera.getTelefono(), idDirecPersona, 1, "admin", "admin", 0);
+			
+			if (Juego.getInstance().addUsuario(nuevo)) {
+				JOptionPane.showMessageDialog(null, "Primer usuario registrado correctamente");
+			}
+		}*/
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {

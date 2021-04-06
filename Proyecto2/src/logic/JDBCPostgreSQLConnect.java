@@ -56,18 +56,19 @@ public class JDBCPostgreSQLConnect {
 	
 	public static Boolean desconectar() {
 		Boolean result = true;
-		try {
-			conexion.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-			result = false;
+		if (isConnected) {
+			try {
+				conexion.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				result = false;
+			}
+			
+			if (result) {
+				isConnected = false;
+				conexion = null;
+			}
 		}
-		
-		if (result) {
-			isConnected = false;
-			conexion = null;
-		}
-		
 		return result;
 	}
 }

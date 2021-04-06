@@ -38,13 +38,12 @@ public class Persona {
 		this.correo = correo;
 	}
 
-	public Persona(String nombre, String apellido, char sexo, Date fecha_nacimiento, String correo, String telefono,
+	public Persona(String nombre, String apellido, char sexo, String correo, String telefono,
 			int id_direccion) {
 		super();
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.sexo = sexo;
-		this.fecha_nacimiento = fecha_nacimiento;
 		this.correo = correo;
 		this.telefono = telefono;
 		this.id_direccion = id_direccion;

@@ -18,9 +18,9 @@ public class Usuario extends Persona {
 		super(id_persona, nombre, apellido, sexo, fecha_nacimiento, correo, telefono, id_direccion);
 		// TODO Auto-generated constructor stub
 	}
-	public Usuario(String nombre, String apellido, char sexo, Date fecha_nacimiento, String correo, String telefono,
+	public Usuario(String nombre, String apellido, char sexo, String correo, String telefono,
 			int id_direccion) {
-		super(nombre, apellido, sexo, fecha_nacimiento, correo, telefono, id_direccion);
+		super(nombre, apellido, sexo, correo, telefono, id_direccion);
 		// TODO Auto-generated constructor stub
 	}
 	public Usuario(String nombre, String apellido, char sexo) {
@@ -43,9 +43,9 @@ public class Usuario extends Persona {
 		this.clave = clave;
 		this.monedas = monedas;
 	}
-	public Usuario(String nombre, String apellido, char sexo, Date fecha_nacimiento, String correo, String telefono,
+	public Usuario(String nombre, String apellido, char sexo, String correo, String telefono,
 			int id_direccion, int id_central, String nombre_usuario, String clave, int monedas) {
-		super(nombre, apellido, sexo, fecha_nacimiento, correo, telefono, id_direccion);
+		super(nombre, apellido, sexo, correo, telefono, id_direccion);
 		this.id_central = id_central;
 		this.nombre_usuario = nombre_usuario;
 		this.clave = clave;

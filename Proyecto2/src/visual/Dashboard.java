@@ -75,8 +75,6 @@ public class Dashboard extends JFrame {
 	 */
 	public static void main(String[] args) {
 		// Al correr por primera vez, crear primera central.
-		Central instancia = Juego.getInstance().buscarCentralPorId(1);
-		JOptionPane.showMessageDialog(null, instancia.toString());
 		if (Juego.getInstance().totalCentral() == 0) {
 
 			Direccion direccion = new Direccion("DOM", "", 51000);
@@ -120,6 +118,7 @@ public class Dashboard extends JFrame {
 		menuBar.add(mnRegistro);
 
 		JMenuItem mntmRegCliente = new JMenuItem("Registrar Cliente");
+		mntmRegCliente.setEnabled(false);
 		mntmRegCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (Juego.getInstance().totalCentral() != 0) {
@@ -144,6 +143,7 @@ public class Dashboard extends JFrame {
 		menuBar.add(mnArcades);
 
 		JMenuItem mntmAgregarArcade = new JMenuItem("Agregar Arcade");
+		mntmAgregarArcade.setEnabled(false);
 		mntmAgregarArcade.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (Juego.getInstance().totalCentral() != 0 && Juego.getInstance().totalCategoria() != 0) {
@@ -158,6 +158,7 @@ public class Dashboard extends JFrame {
 		mnArcades.add(mntmAgregarArcade);
 
 		JMenuItem mntmListaDeArcades = new JMenuItem("Lista de Arcades");
+		mntmListaDeArcades.setEnabled(false);
 		mntmListaDeArcades.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ListaArcades ventana = new ListaArcades();
@@ -168,6 +169,7 @@ public class Dashboard extends JFrame {
 		mnArcades.add(mntmListaDeArcades);
 		
 		JMenuItem mntmJugarArcade = new JMenuItem("Jugar Arcade");
+		mntmJugarArcade.setEnabled(false);
 		mntmJugarArcade.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JugarArcade ventana = new JugarArcade();
@@ -182,6 +184,7 @@ public class Dashboard extends JFrame {
 		menuBar.add(mnPuntuaciones);
 		
 		JMenuItem mntmPuntuaciones = new JMenuItem("Lista de Puntuaciones");
+		mntmPuntuaciones.setEnabled(false);
 		mntmPuntuaciones.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ListaPuntuaciones ventana = new ListaPuntuaciones();
@@ -224,6 +227,7 @@ public class Dashboard extends JFrame {
 		menuBar.add(mnPremio);
 
 		JMenuItem mntmCrearPremio = new JMenuItem("Crear Premio");
+		mntmCrearPremio.setEnabled(false);
 		mntmCrearPremio.addActionListener(new ActionListener() {
 			// Borrar cuando hagan push
 			public void actionPerformed(ActionEvent e) {
@@ -239,6 +243,7 @@ public class Dashboard extends JFrame {
 		mnPremio.add(mntmCrearPremio);
 
 		JMenuItem mntmListaPremios = new JMenuItem("Lista de Premios");
+		mntmListaPremios.setEnabled(false);
 		mntmListaPremios.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ListaPremios ventana = new ListaPremios();
@@ -249,6 +254,7 @@ public class Dashboard extends JFrame {
 		mnPremio.add(mntmListaPremios);
 		
 		JMenuItem mntmCanjearPremio = new JMenuItem("Canjear Premio");
+		mntmCanjearPremio.setEnabled(false);
 		mntmCanjearPremio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				CanjearPremio ventana = new CanjearPremio();
@@ -263,6 +269,7 @@ public class Dashboard extends JFrame {
 		menuBar.add(mnPerfil);
 		
 		JMenuItem mntmVerPerfil = new JMenuItem("Ver Perfil");
+		mntmVerPerfil.setEnabled(false);
 		mntmVerPerfil.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				VerPerfil ventana = new VerPerfil();
@@ -288,6 +295,7 @@ public class Dashboard extends JFrame {
 		menuBar.add(mnAdministracin);
 
 		JMenuItem mntmUsuarios = new JMenuItem("Usuarios");
+		mntmUsuarios.setEnabled(false);
 		mntmUsuarios.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Usuarios ventana = new Usuarios();

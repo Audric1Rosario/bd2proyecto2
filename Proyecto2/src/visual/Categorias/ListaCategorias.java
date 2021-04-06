@@ -14,6 +14,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import logic.JDBCPostgreSQLConnect;
+import logic.JTextFieldLimit;
 import logic.Juego;
 import logic.modelos.Categoria;
 
@@ -44,7 +45,8 @@ public class ListaCategorias extends JDialog {
 	private final JPanel contentPanel = new JPanel();
 
 	// Tablas
-	private static JTable tableEnfermedades;
+	private static JTable tableCategorias;
+	//private static JTable tableCategorias;
 	private static DefaultTableModel model;
 	private static Object row[];
 
@@ -61,6 +63,7 @@ public class ListaCategorias extends JDialog {
 	private static JButton btnEliminar;
 	private JButton btnCerrar;
 	private static JTextField txtClasificacion;
+	private static JButton btnRefresh;
 	
 	static Connection conexion = null;
 	static PreparedStatement preparedStatement = null;
@@ -73,16 +76,7 @@ public class ListaCategorias extends JDialog {
 	/**
 	 * Launch the application.
 	 */
-	 
-		 public static void main(String[] args) { 
-			 try { 
-				 ListaCategorias dialog = new ListaCategorias(); 
-				 dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				 dialog.setVisible(true); 
-			} catch (Exception e) { 
-				e.printStackTrace(); 
-			} 
-		}
+	
 	/**
 	 * Create the dialog.
 	 */
@@ -111,51 +105,48 @@ public class ListaCategorias extends JDialog {
 		panel.add(scrollPane, BorderLayout.CENTER);
 		{
 		model = new DefaultTableModel();
-		String[] headers = { "Nombre", "Descripción", "Clasificación" };
+		String[] headers = { "ID", "Nombre", "Clasificación", "Descripción" };
 		model.setColumnIdentifiers(headers);
 		
-		tableEnfermedades = new JTable() {
+		tableCategorias = new JTable() {
 			public boolean isCellEditable(int rowIndex, int vColIndex) {
 				return false;
 			}
 		};
-		tableEnfermedades = new JTable() {
+		tableCategorias = new JTable() {
 			public boolean isCellEditable(int rowIndex, int vColIndex) {
 				return false;
 			}};
-			tableEnfermedades.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			tableEnfermedades.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+			tableCategorias.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			tableCategorias.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
 				public void valueChanged(ListSelectionEvent event) {
-					if (tableEnfermedades.getSelectedRow() != -1) {
-						categoriaModificar = Juego.getInstance().buscarCategoriaByNombre(tableEnfermedades.getValueAt(tableEnfermedades.getSelectedRow(), 0).toString());
+					if (tableCategorias.getSelectedRow() != -1) {
+						int index = Integer.valueOf(tableCategorias.getValueAt(tableCategorias.getSelectedRow(), 0).toString());
+						categoriaModificar = Juego.getInstance().buscarCategoriaPorId(index);
 						rellenarDatos();
 						
-						/*
-						if (usuarioActual instanceof Administrador) {
-							if (((Administrador)usuarioActual).getAutoridad() <= 3) {
-								btnModificar.setEnabled(true);
-								btnEliminar.setEnabled(true);
-							}
-						}
-						*/
+						btnModificar.setEnabled(true);
+						btnEliminar.setEnabled(true);
+						// Activar edicion...
+						modificar(1);
 					}
 				}
 			});
-			tableEnfermedades.setModel(model);
-			tableEnfermedades.getTableHeader().setResizingAllowed(false); 
-			tableEnfermedades.getTableHeader().setReorderingAllowed(false);
-			scrollPane.setViewportView(tableEnfermedades);
+			tableCategorias.setModel(model);
+			tableCategorias.getTableHeader().setResizingAllowed(false); 
+			tableCategorias.getTableHeader().setReorderingAllowed(false);
+			scrollPane.setViewportView(tableCategorias);
 		
-		tableEnfermedades.setModel(model);
-		tableEnfermedades.getTableHeader().setResizingAllowed(false);
-		tableEnfermedades.getTableHeader().setReorderingAllowed(false);
+		tableCategorias.setModel(model);
+		tableCategorias.getTableHeader().setResizingAllowed(false);
+		tableCategorias.getTableHeader().setReorderingAllowed(false);
 		}
 		
-		tableEnfermedades.getSelectionModel().addListSelectionListener(new
+		tableCategorias.getSelectionModel().addListSelectionListener(new
 		ListSelectionListener(){ public void valueChanged(ListSelectionEvent event) {
-			if (tableEnfermedades.getSelectedRow() != -1) { 
+			if (tableCategorias.getSelectedRow() != -1) { 
 				categoriaModificar = Juego.getInstance().buscarCategoriaByNombre(
-						tableEnfermedades.getValueAt(tableEnfermedades.getSelectedRow(), 0).toString()); 
+						tableCategorias.getValueAt(tableCategorias.getSelectedRow(), 0).toString()); 
 					rellenarDatos();
 					/*
 					if (usuarioActual instanceof Administrador) { 
@@ -168,7 +159,7 @@ public class ListaCategorias extends JDialog {
 			} 
 		}});
 		
-		scrollPane.setViewportView(tableEnfermedades);
+		scrollPane.setViewportView(tableCategorias);
 		{
 			JPanel panel_1 = new JPanel();
 			panel_1.setBorder(new TitledBorder(null, "Informaci\u00F3n detallada", TitledBorder.LEADING,
@@ -185,6 +176,7 @@ public class ListaCategorias extends JDialog {
 			txtNombre.setEditable(false);
 			txtNombre.setColumns(10);
 			txtNombre.setBounds(10, 46, 232, 20);
+			txtNombre.setDocument(new JTextFieldLimit(19));
 			panel_1.add(txtNombre);
 
 			JLabel lblDescripcion = new JLabel("Descripción");
@@ -199,6 +191,7 @@ public class ListaCategorias extends JDialog {
 			txtClasificacion.setEditable(false);
 			txtClasificacion.setColumns(10);
 			txtClasificacion.setBounds(10, 259, 232, 20);
+			txtClasificacion.setDocument(new JTextFieldLimit(5));
 			panel_1.add(txtClasificacion);
 
 			JPanel panel_2 = new JPanel();
@@ -214,6 +207,7 @@ public class ListaCategorias extends JDialog {
 			txtDescripcion.setEditable(false);
 			txtDescripcion.setWrapStyleWord(true);
 			txtDescripcion.setLineWrap(true);
+			txtDescripcion.setDocument(new JTextFieldLimit(255));
 			scrollPane_1.setViewportView(txtDescripcion);
 		}
 		{
@@ -233,9 +227,11 @@ public class ListaCategorias extends JDialog {
 			
 			btnBuscar.addActionListener(new ActionListener() { 
 				public void actionPerformed(ActionEvent e) { 
-					clear(); 
-					tableEnfermedades.clearSelection();
-					rellenarTabla();
+					if (txtBuscar.getText() != "") {
+						clear(); 
+						//tableCategorias.clearSelection();
+						rellenarTabla(txtBuscar.getText(), false);
+					}
 				} 
 			});
 			btnBuscar.setIcon(new ImageIcon(ListaCategorias.class.getResource("/image/magnifying-glass.png")));
@@ -247,13 +243,22 @@ public class ListaCategorias extends JDialog {
 			panel_1.add(txtBuscar);
 			txtBuscar.setColumns(10);
 
-			JButton btnRefresh = new JButton("");
-			btnRefresh.setToolTipText("Recargar");
+			btnRefresh = new JButton("");
+			btnRefresh.setToolTipText("Llenar");
 			btnRefresh.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent e) { 
 			clear(); 
-			txtBuscar.setText("");
-			rellenarTabla(); 
+			
+			if (btnRefresh.getToolTipText() == "Llenar") {
+				txtBuscar.setText("");
+				rellenarTabla("", true);
+				btnRefresh.setToolTipText("Vaciar");
+			} else {
+				txtBuscar.setText("");
+				clear();
+				btnRefresh.setToolTipText("Llenar");
+			}
+			 
 			} });
 			
 			btnRefresh.setIcon(new ImageIcon(ListaCategorias.class.getResource("/image/reload.png")));
@@ -271,9 +276,19 @@ public class ListaCategorias extends JDialog {
 				btnModificar.addActionListener(new ActionListener() { 
 				public void actionPerformed(ActionEvent e) { 
 					if (categoriaModificar != null /* & usuarioActual instanceof Administrador*/) { 
-						CrearCategoria ventana = new CrearCategoria(); 
-						ventana.setModal(true);
-						ventana.setVisible(true); 
+						Boolean isVoid = true;
+						if (txtNombre.getText() != "") {
+							if (txtClasificacion.getText() != "") {
+								if (txtDescripcion.getText() != "") {
+									isVoid = false;
+									modificar(2); 
+								}
+							}
+						}
+						
+						if (isVoid) {
+							JOptionPane.showMessageDialog(null, "No puede dejar un campo vacío.", "Información.", JOptionPane.INFORMATION_MESSAGE);
+						}
 					} 
 				} });
 				
@@ -285,44 +300,15 @@ public class ListaCategorias extends JDialog {
 			}
 			{
 				btnEliminar = new JButton("Eliminar");
-				/*
-				 * btnEliminar.addActionListener(new ActionListener() { public void
-				 * actionPerformed(ActionEvent e) { if (enfermedadModificar != null &&
-				 * usuarioActual instanceof Administrador) { clear(); // No hacer eso,
-				 * 
-				 * Clinica.getInstance().getEnfermedades().remove(enfermedadModificar);
-				 * enfermedadModificar = null; rellenarTabla(txtBuscar.getText()); // Borrado
-				 * lógico, no es posible eliminar esta enfermedad si hay objetos que la tienen
-				 * 
-				 * 
-				 * int index =
-				 * Clinica.getInstance().getEnfermedades().indexOf(enfermedadModificar); if
-				 * (enfermedadModificar.getCantPacientes() == 0 && index != -1) { // Eliminar si
-				 * no tiene ningún paciente. boolean esPosible = true; // Sólo se puede eliminar
-				 * si no hay vacunas de esta enfermedad
-				 * 
-				 * for (Vacuna vacuna : Clinica.getInstance().getVacunas()) { if
-				 * (vacuna.getEnfermedadNombre().equalsIgnoreCase(enfermedadModificar.getNombre(
-				 * ))) { esPosible = false; // Ya se sabe que no se puede eliminar porque hay
-				 * vacunas. vacuna.setListar(false); // esa vacuna tampoco puede ser listada
-				 * mas. } }
-				 * 
-				 * if (esPosible) { // Si no hay vacunas.
-				 * Clinica.getInstance().getEnfermedades().remove(index); } else {
-				 * Clinica.getInstance().getEnfermedades().get(index).setListar(false); }
-				 * 
-				 * } else if (index != -1) {
-				 * Clinica.getInstance().getEnfermedades().get(index).setListar(false); for
-				 * (Vacuna vacuna : Clinica.getInstance().getVacunas()) { if
-				 * (vacuna.getEnfermedadNombre().equalsIgnoreCase(enfermedadModificar.getNombre(
-				 * ))) { vacuna.setListar(false); // esa vacuna tampoco puede ser listada mas. }
-				 * } } else { JOptionPane.showMessageDialog(null, "Error al eliminar.",
-				 * "Advertencia.", JOptionPane.WARNING_MESSAGE); }
-				 * 
-				 * rellenarTabla(txtBuscar.getText()); } else {
-				 * JOptionPane.showMessageDialog(null, "Error al eliminar.", "Advertencia.",
-				 * JOptionPane.WARNING_MESSAGE); } } });
-				 */
+				btnEliminar.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						Juego.getInstance().eliminarObjeto("categoria", categoriaModificar.getId_categoria());
+						JOptionPane.showMessageDialog(null, "Se ha eliminado la categoría: " + categoriaModificar.getId_categoria() + ".", "Información.", JOptionPane.INFORMATION_MESSAGE);
+						clear();
+						rellenarTabla("", true);
+					}
+				});
+				
 				btnEliminar.setEnabled(false);
 				buttonPane.add(btnEliminar);
 			}
@@ -350,68 +336,101 @@ public class ListaCategorias extends JDialog {
 				btnModificar.setVisible(false);
 				btnEliminar.setVisible(false);
 			}
-		}
-		rellenarTabla("");*/
+		}*/
+		//rellenarTabla();
 	}
 	
 	private void clear() {
+		model.setRowCount(0);
+		
+		txtNombre.setEnabled(false);
+		txtClasificacion.setEnabled(false);
+		txtDescripcion.setEnabled(false);
+		
+		txtNombre.setEditable(false);
+		txtClasificacion.setEditable(false);
+		txtDescripcion.setEditable(false);
+		
 		txtNombre.setText("");
 		txtClasificacion.setText("");
 		txtDescripcion.setText("");
+		
+		
 		btnModificar.setEnabled(false);
 		btnEliminar.setEnabled(false);
+		
+		categoriaModificar = null;
 	}
 	
-	public static void sclear() {
+	private static void setSelection() {
 		txtNombre.setText(categoriaModificar.getNombre());
-		txtClasificacion.setText(categoriaModificar.getClasificacion());
 		txtDescripcion.setText(categoriaModificar.getDescripcion());
+		txtClasificacion.setText(categoriaModificar.getClasificacion());
 	}
 	
 	private void rellenarDatos() {
-		/*conexion = JDBCPostgreSQLConnect.conectar();
-		try {
-			preparedStatement = conexion.prepareStatement("SELECT * FROM categoria");
-			resultSet = preparedStatement.executeQuery();
-			
-			if(resultSet.next()) {
-				txtNombre.setText(resultSet.getString("nombre"));
-				txtDescripcion.setText(resultSet.getString("descripcion"));
-				txtClasificacion.setText(resultSet.getString("clasificacion"));
-			} else {
-				JOptionPane.showMessageDialog(null, "Error al cargar datos.", "Advertencia.", JOptionPane.WARNING_MESSAGE);
-			}
-			conexion.close();
-			
-		} catch (Exception e2) {
-			e2.printStackTrace();
-		}*/
+		if (categoriaModificar != null) {
+			JOptionPane.showMessageDialog(null, "Puede modificar o eliminar esta categoría.", "Información.", JOptionPane.INFORMATION_MESSAGE);
+			setSelection();
+			modificar(1);
+		}
 	}
 	
-	public static void rellenarTabla(){
+	private void modificar( int razon )  {
+		
+		switch (razon) {
+		case 1: 
+			txtNombre.setEnabled(true);
+			txtClasificacion.setEnabled(true);
+			txtDescripcion.setEnabled(true);
+			
+			txtNombre.setEditable(true);
+			txtClasificacion.setEditable(true);
+			txtDescripcion.setEditable(true);
+			break;
+			
+		case 2:
+			if (categoriaModificar != null) {
+				// Cambiar los parametros originales para mandar a modificar...
+				categoriaModificar.setNombre(txtNombre.getText());
+				categoriaModificar.setClasificacion(txtClasificacion.getText());
+				categoriaModificar.setDescripcion(txtDescripcion.getText());
+				// Mandar a modificar... 
+				Juego.getInstance().modificarObjeto("categoria", categoriaModificar, categoriaModificar.getId_categoria());
+				// Avisar modificacion: 
+				JOptionPane.showMessageDialog(null, "Se ha modificado la categoría: " + categoriaModificar.getId_categoria() + ".", "Información.", JOptionPane.INFORMATION_MESSAGE);
+				// Clear 
+				clear();
+				// Rellenar tabla
+				rellenarTabla("", true);
+			}
+
+			break;
+			
+		case 3:
+			
+			break;
+			
+		default: 
+			clear();
+			break;
+		}
+		
+	}
+	
+	public static void rellenarTabla(String buscar, Boolean todo){
 		model.setRowCount(0);
 		row = new Object[model.getColumnCount()];
-		/*
-		conexion = JDBCPostgreSQLConnect.conectar();
-		try {
-			for (int i = 0; i < Juego.getInstance().getCategorias().size(); i++) {
-				preparedStatement = conexion.prepareStatement("SELECT * FROM categoria WHERE nombre = ?");
-				preparedStatement.setString(1, txtNombre.getText());
-				resultSet = preparedStatement.executeQuery();
-				
-				if(resultSet.next()) {
-					if (Juego.getInstance().getCategorias().get(i).isListar()) {	// Saber si se puede listar o no.
-						row[0] = resultSet.getString("nombre");
-						row[1] = resultSet.getString("descripcion");
-						row[2] = resultSet.getString("clasificacion");
-					}
-				} else {
-					JOptionPane.showMessageDialog(null, "Error al cargar datos.", "Advertencia.", JOptionPane.WARNING_MESSAGE);
-				}
-				conexion.close();
-			}	
-		} catch (Exception e2) {
-			e2.printStackTrace();
-		}*/
+		btnRefresh.setToolTipText("Vaciar");
+		
+		ArrayList<Categoria> categorias = Juego.getInstance().buscarCategoria(buscar, todo);
+		
+		for (int i = 0; i < categorias.size(); i++) {
+			row[0] = categorias.get(i).getId_categoria();
+			row[1] = categorias.get(i).getNombre();
+			row[2] = categorias.get(i).getClasificacion();
+			row[3] = categorias.get(i).getDescripcion();
+			model.addRow(row);
+		}
 	}
 }

@@ -11,6 +11,7 @@ import java.awt.Toolkit;
 import javax.swing.border.TitledBorder;
 
 import logic.JDBCPostgreSQLConnect;
+import logic.JTextFieldLimit;
 import logic.Juego;
 import logic.modelos.Categoria;
 
@@ -93,10 +94,12 @@ public class CrearCategoria extends JDialog {
 
 		txtNombreCategoria = new JTextField();
 		txtNombreCategoria.setBounds(196, 11, 238, 20);
-
+		
+		
 		panel.add(txtNombreCategoria);
 		txtNombreCategoria.setColumns(10);
-
+		txtNombreCategoria.setDocument(new JTextFieldLimit(19));
+		
 		JLabel lblNombreDeLa = new JLabel("Nombre de la categor\u00EDa: ");
 		lblNombreDeLa.setHorizontalAlignment(SwingConstants.TRAILING);
 		lblNombreDeLa.setBounds(10, 14, 176, 14);
@@ -113,6 +116,7 @@ public class CrearCategoria extends JDialog {
 		pnlClasificacion.add(scrollPane, BorderLayout.CENTER);
 
 		txtClasificacion = new JTextField();
+		txtClasificacion.setDocument(new JTextFieldLimit(5));
 		scrollPane.setViewportView(txtClasificacion);
 
 		JPanel pnlDescripcion = new JPanel();
@@ -128,6 +132,7 @@ public class CrearCategoria extends JDialog {
 		txtDescripcion = new JTextArea();
 		txtDescripcion.setLineWrap(true);
 		txtDescripcion.setWrapStyleWord(true);
+		txtDescripcion.setDocument(new JTextFieldLimit(255));
 		scrollPane_1.setViewportView(txtDescripcion);
 		{
 			JPanel buttonPane = new JPanel();
@@ -146,9 +151,24 @@ public class CrearCategoria extends JDialog {
 						}
 
 						if (txtClasificacion.getText().equals("")) {
-							JOptionPane.showMessageDialog(null, "Por favor, escriba los síntomas que presenta esta categoria.", "Advertencia.", JOptionPane.WARNING_MESSAGE);
+							JOptionPane.showMessageDialog(null, "Por favor, escriba la clasificación de la categoria.", "Advertencia.", JOptionPane.WARNING_MESSAGE);
 							return;
 						}
+						
+						if (txtDescripcion.getText().equals("")) {
+							JOptionPane.showMessageDialog(null, "Por favor, escriba la descripción de la categoria.", "Advertencia.", JOptionPane.WARNING_MESSAGE);
+							return;
+						}
+						
+						JOptionPane.showMessageDialog(null, "Registrando...");
+						Categoria nueva = new Categoria (txtNombreCategoria.getText(), txtClasificacion.getText(), txtDescripcion.getText());
+						if (Juego.getInstance().addCategoria(nueva)) {
+							JOptionPane.showMessageDialog(null, "Su categoría se ha registrado correctamente");
+							clear();
+						} else {
+							JOptionPane.showMessageDialog(null, "Ha ocurrido un error");
+						}
+						
 
 						// Verificación de que no se repite el nombre de la categoria.
 						// Revisar que no se repita

@@ -14,7 +14,7 @@ public class Categoria implements Serializable{
 		super();
 	}
 
-	public Categoria(String nombre, String descripcion, String clasificacion) {
+	public Categoria(String nombre, String clasificacion, String descripcion) {
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.clasificacion = clasificacion;
