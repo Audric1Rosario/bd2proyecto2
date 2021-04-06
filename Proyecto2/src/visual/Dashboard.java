@@ -19,6 +19,8 @@ import javax.swing.JLabel;
 import javax.swing.ImageIcon;
 import java.awt.Font;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -38,6 +40,11 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
+
+import logic.JDBCPostgreSQLConnect;
+import logic.Juego;
+import logic.modelos.Categoria;
+
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -50,7 +57,7 @@ import visual.Clientes.*;
 import visual.Perfil.*;
 import visual.Premio.*;
 import visual.Puntuaciones.*;
-
+import logic.modelos.*;
 
 public class Dashboard extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -67,6 +74,21 @@ public class Dashboard extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+		// Al correr por primera vez, crear primera central.
+		Central instancia = Juego.getInstance().buscarCentralPorId(1);
+		JOptionPane.showMessageDialog(null, instancia.toString());
+		if (Juego.getInstance().totalCentral() == 0) {
+
+			Direccion direccion = new Direccion("DOM", "", 51000);
+			int idDireccion = -1;
+			idDireccion = Juego.getInstance().addDireccion(direccion);			
+			Central nueva = new Central(idDireccion, "Central", 1, "809-999-9999");
+			
+			if (Juego.getInstance().addCentral(nueva)) {
+				JOptionPane.showMessageDialog(null, "Primera central registrada correctamente");
+			}
+		}
+		
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -82,26 +104,7 @@ public class Dashboard extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Dashboard(/*Empleado actual*/) {
-		/*addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				
-				// Guardar datos.
-				FileOutputStream clinicaGuardar;
-				ObjectOutputStream clinicaWrite;
-				
-				try {
-					clinicaGuardar = new FileOutputStream("data/clinica.dat");
-					clinicaWrite = new ObjectOutputStream(clinicaGuardar);
-					clinicaWrite.writeObject(Clinica.getInstance());
-				} catch (FileNotFoundException e1) {
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-			}
-		});*/
+	public Dashboard() {
 		setTitle("Dashboard");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Dashboard.class.getResource("/image/game-controller.png")));
 		setResizable(false);
@@ -119,16 +122,19 @@ public class Dashboard extends JFrame {
 		JMenuItem mntmRegCliente = new JMenuItem("Registrar Cliente");
 		mntmRegCliente.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				RegCliente ventana = null;
-				try {
-					ventana = new RegCliente();
-				} catch (ParseException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				if (Juego.getInstance().totalCentral() != 0) {
+					RegCliente ventana = null;
+					try {
+						ventana = new RegCliente();
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					ventana.setModal(true);
+					ventana.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "No es posible abrir, sin una central de videojuegos donde registrar.");
 				}
-				ventana.setModal(true);
-				ventana.setVisible(true);
-				
 			}
 		});
 		mnRegistro.add(mntmRegCliente);
@@ -140,9 +146,13 @@ public class Dashboard extends JFrame {
 		JMenuItem mntmAgregarArcade = new JMenuItem("Agregar Arcade");
 		mntmAgregarArcade.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CrearArcade ventana = new CrearArcade();
-				ventana.setModal(true);
-				ventana.setVisible(true);
+				if (Juego.getInstance().totalCentral() != 0 && Juego.getInstance().totalCategoria() != 0) {
+					CrearArcade ventana = new CrearArcade();
+					ventana.setModal(true);
+					ventana.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "No se pueden crear arcades sin central o sin categorías");
+				}
 			}
 		});
 		mnArcades.add(mntmAgregarArcade);
@@ -188,9 +198,13 @@ public class Dashboard extends JFrame {
 		JMenuItem mntmCategoria = new JMenuItem("Crear categor\u00EDa");
 		mntmCategoria.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				CrearCategoria ventana = new CrearCategoria();
-				ventana.setModal(true);
-				ventana.setVisible(true);
+				if (Juego.getInstance().totalCentral() != 0) {
+					CrearCategoria ventana = new CrearCategoria();
+					ventana.setModal(true);
+					ventana.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "No es posible abrir, sin una central de videojuegos donde registrar.");
+				}				
 			}
 		});
 		mnCategoria.add(mntmCategoria);
@@ -213,10 +227,13 @@ public class Dashboard extends JFrame {
 		mntmCrearPremio.addActionListener(new ActionListener() {
 			// Borrar cuando hagan push
 			public void actionPerformed(ActionEvent e) {
-				CrearPremio ventana = new CrearPremio();
-				ventana.setModal(true);
-				ventana.setVisible(true);
-				
+				if (Juego.getInstance().totalCentral() != 0) {
+					CrearPremio ventana = new CrearPremio();
+					ventana.setModal(true);
+					ventana.setVisible(true);
+				} else {
+					JOptionPane.showMessageDialog(null, "No es posible abrir, sin una central de videojuegos donde registrar.");
+				}
 			}
 		});
 		mnPremio.add(mntmCrearPremio);
@@ -256,27 +273,14 @@ public class Dashboard extends JFrame {
 		mnPerfil.add(mntmVerPerfil);
 		
 		JMenuItem mntmSalir = new JMenuItem("Salir");
-		/*mntmSalir.addActionListener(new ActionListener() {
+		mntmSalir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Guardar datos.
-				FileOutputStream clinicaGuardar;
-				ObjectOutputStream clinicaWrite;
-				actual.setLastConnection(new Date());
-				try {
-					clinicaGuardar = new FileOutputStream("data/clinica.dat");
-					clinicaWrite = new ObjectOutputStream(clinicaGuardar);
-					clinicaWrite.writeObject(Clinica.getInstance());
-				} catch (FileNotFoundException e1) {
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				
 				Login ventana = new Login();
 				ventana.setVisible(true);
 				dispose();
 			}
-		});*/
+		});
 		mnPerfil.add(mntmSalir);
 		
 		// Menú para los administradores.

@@ -39,7 +39,7 @@ import java.util.Calendar;
 
 import javax.swing.*;
 import java.awt.Color;
-
+import logic.modelos.*;
 public class RegCliente extends JDialog {
 
 	private JPanel contentPane;
@@ -247,8 +247,24 @@ public class RegCliente extends JDialog {
 							JOptionPane.showMessageDialog(null, "Region del Cliente vacio","Notificacion", JOptionPane.INFORMATION_MESSAGE);
 							return;
 						}					
-/*
-						Enfermedad buscar;
+
+						Usuario nuevo = new Usuario();
+						Persona nueva = new Persona();
+						
+						nuevo.setNombre(txtName.getText());
+						nuevo.setClave(txtClave.getText());
+						/*
+						
+						ClienteModificar.setUsuario(txtUsuario.getText());
+						ClienteModificar.setEdad(Integer.valueOf(spnAge.getValue().toString()));
+						nuevo.setSexo(rdbtnMasculino.isSelected() ? "M" : "F");
+						ClienteModificar.setEstadoCivil(rdbtnSoltero.isSelected() ? "Soltero" : "Casado");
+						nuevo.setTipoSangre(cbxBlood.getSelectedItem().toString());
+						ClienteModificar.setTelefono(txtPhone.getText());
+						ClienteModificar.setCelular(txtCellphone.getText());
+						ClienteModificar.setEmail(txtEmail.getText());*/
+						
+						/*
 						if (ClienteModificar == null) { 						
 							Cliente aux = new Cliente( txtName.getText(), txtClave.getText(), txtUsuario.getText(),Integer.valueOf(spnAge.getValue().toString()),
 									rdbtnMasculino.isSelected() ? "M" : "F", rdbtnSoltero.isSelected() ? "Soltero" : "Casado", cbxBlood.getSelectedItem().toString(), 
@@ -270,19 +286,7 @@ public class RegCliente extends JDialog {
 							Dashboard.cargarSangre();
 						} else {
 							// Agregar los datos al Cliente a modificar.
-							ClienteModificar.setNombre(txtName.getText());
-							ClienteModificar.setClave(txtClave.getText());
-							ClienteModificar.setUsuario(txtUsuario.getText());
-							ClienteModificar.setEdad(Integer.valueOf(spnAge.getValue().toString()));
-							ClienteModificar.setSexo(rdbtnMasculino.isSelected() ? "M" : "F");
-							ClienteModificar.setEstadoCivil(rdbtnSoltero.isSelected() ? "Soltero" : "Casado");
-							ClienteModificar.setTipoSangre(cbxBlood.getSelectedItem().toString());
-							ClienteModificar.setEstatura(Float.valueOf(spnHeight.getValue().toString()));
-							ClienteModificar.setRegion(txtRegion.getText());
-							ClienteModificar.setPais(cbxPais.getSelectedItem().toString());
-							ClienteModificar.setTelefono(txtPhone.getText());
-							ClienteModificar.setCelular(txtCellphone.getText());
-							ClienteModificar.setEmail(txtEmail.getText());
+							
 
 							// Saber a cuales enfermedades se les está quitando y sumando.					
 							int index;

@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 
 import logic.JDBCPostgreSQLConnect;
 import logic.Juego;
+import logic.modelos.Categoria;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -368,7 +369,7 @@ public class ListaCategorias extends JDialog {
 	}
 	
 	private void rellenarDatos() {
-		conexion = JDBCPostgreSQLConnect.conectar();
+		/*conexion = JDBCPostgreSQLConnect.conectar();
 		try {
 			preparedStatement = conexion.prepareStatement("SELECT * FROM categoria");
 			resultSet = preparedStatement.executeQuery();
@@ -384,13 +385,13 @@ public class ListaCategorias extends JDialog {
 			
 		} catch (Exception e2) {
 			e2.printStackTrace();
-		}
+		}*/
 	}
 	
 	public static void rellenarTabla(){
 		model.setRowCount(0);
 		row = new Object[model.getColumnCount()];
-		
+		/*
 		conexion = JDBCPostgreSQLConnect.conectar();
 		try {
 			for (int i = 0; i < Juego.getInstance().getCategorias().size(); i++) {
@@ -411,6 +412,6 @@ public class ListaCategorias extends JDialog {
 			}	
 		} catch (Exception e2) {
 			e2.printStackTrace();
-		}
+		}*/
 	}
 }

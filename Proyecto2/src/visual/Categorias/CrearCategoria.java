@@ -12,6 +12,7 @@ import javax.swing.border.TitledBorder;
 
 import logic.JDBCPostgreSQLConnect;
 import logic.Juego;
+import logic.modelos.Categoria;
 
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
@@ -151,13 +152,13 @@ public class CrearCategoria extends JDialog {
 
 						// Verificación de que no se repite el nombre de la categoria.
 						// Revisar que no se repita
-						if (modificar == null) {
+						/*if (modificar == null) {
 							if (Juego.getInstance().verificarCategoria(txtNombreCategoria.getText()) == false) {
 								JOptionPane.showMessageDialog(null, "El nombre de la categoria ya existe, favor coloque uno nuevo.", "Advertencia.", JOptionPane.WARNING_MESSAGE);
 								return;
 							} 
-						}
-						
+						}*/
+						/*
 						if (modificar != null) {							
 							modificar.setClasificacion(txtClasificacion.getText());
 							modificar.setDescripcion(txtDescripcion.getText());
@@ -182,7 +183,7 @@ public class CrearCategoria extends JDialog {
 								}
 								aux++;
 							}
-
+							
 							if (!volverActivar) {	// Si no estaba desactivada, crear categoria
 								Categoria nueva = new Categoria(txtNombreCategoria.getText(), txtClasificacion.getText(), txtDescripcion.getText());
 								
@@ -213,7 +214,7 @@ public class CrearCategoria extends JDialog {
 								activar.setDescripcion(txtDescripcion.getText());
 								activar.setListar(true);   // Esta categoria vuelve a estar activa.
 							}
-						}									
+						}*/									
 					}
 				});
 				btnAceptar.setActionCommand("OK");

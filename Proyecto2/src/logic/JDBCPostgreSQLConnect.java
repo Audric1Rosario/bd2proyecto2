@@ -10,33 +10,65 @@ public class JDBCPostgreSQLConnect {
 	// jdbc url
 	// jdbc username
 	// jdbc password
-	private static String url = "jdbc:postgresql://localhost/proyecto";
-	private static String user = "postgres";
-	private static String password = "123";
+	private static String url = "jdbc:postgresql://localhost/proyecto";	    // Indicar donde se conecta
+	private static String user = "postproject";								// Usuario
+	private static String password = "!j'P*+tQm8dYD6_,";					// Contraseña fuerte
+	private static Boolean isConnected = false;
 	
-	public static Connection conectar() {
-		Connection conexion = null;
+	// Conexión
+	private static Connection conexion = null;
+	
+	/*public JDBCPostgreSQLConnect() {
+		super();
+	}*/
+	
+	// Conectar a la bd en postgresql
+	private static Boolean conectar() {		
+		Boolean result = true;
 		try {
 			conexion = DriverManager.getConnection(url, user, password);
+		} catch (SQLException e)
+		{
+			e.printStackTrace();
+			result = false;
+		}
+		return result;
+	}
+	
+	// Para poder conectarse
+	public static Connection getConnection() {
+		if (conexion != null) {
+			return conexion;
+		}
 		
-			if(conexion != null) {
-				System.out.println("Conexion a PostgreSQL con exito!");
-			} else {
-				System.out.println("Fallo en la conexion");
-			}
-			
-			/*
-			Statement statement = conexion.createStatement();
-			ResultSet resultSet = statement.executeQuery("SELECT VERSION()");
-			if(resultSet.next()) {
-				System.out.println(resultSet.getString(1));
-			}
-			*/
-			
+		if (conectar()) {
+			isConnected = true;
+			return conexion;
+		}
+		
+		return null;
+	}
+	
+	// Esto es para poder comprobar el estado
+	public static Boolean sqlEstado() {
+		return isConnected;
+	}
+	
+	public static Boolean desconectar() {
+		Boolean result = true;
+		try {
+			conexion.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			result = false;
 		}
-		return conexion;
+		
+		if (result) {
+			isConnected = false;
+			conexion = null;
+		}
+		
+		return result;
 	}
 }
 
